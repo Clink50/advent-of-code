@@ -24,31 +24,25 @@ const getAdjacent = (lines, i, j) => {
   return adjacent;
 };
 
-const next = (lines) => {
-  let updatedLines = lines.map((x) => x.map((y) => y));
-
-  for (let i = 0; i < lines.length; i++) {
-    for (let j = 0; j < lines[i].length; j++) {
-      const char = lines[i][j];
-      const adjacent = getAdjacent(lines, i, j);
-      const numOccupied = adjacent.filter((val) => val === Constants.OCCUPIED).length;
-      if (char === Constants.EMPTY && numOccupied < 1) {
-        updatedLines[i][j] = Constants.OCCUPIED;
-      } else if (char === Constants.OCCUPIED && numOccupied >= 4) {
-        updatedLines[i][j] = Constants.EMPTY;
-      }
-    }
-  }
-
-  return updatedLines;
-};
-
 async function part1 () {
   const input = await fs.promises.readFile('sample.txt', 'utf-8');
   let lines = input.split('\r\n').map((x) => x.split(''));
 
   while (true) {
-    let updatedLines = next(lines);
+    let updatedLines = lines.map((x) => x.map((y) => y));
+
+    for (let i = 0; i < lines.length; i++) {
+      for (let j = 0; j < lines[i].length; j++) {
+        const char = lines[i][j];
+        const adjacent = getAdjacent(lines, i, j);
+        const numOccupied = adjacent.filter((val) => val === Constants.OCCUPIED).length;
+        if (char === Constants.EMPTY && numOccupied < 1) {
+          updatedLines[i][j] = Constants.OCCUPIED;
+        } else if (char === Constants.OCCUPIED && numOccupied >= 4) {
+          updatedLines[i][j] = Constants.EMPTY;
+        }
+      }
+    }
 
     if (JSON.stringify(updatedLines) === JSON.stringify(lines)) {
       console.log('Part 1:', updatedLines.join('').match(/#/g).length);
@@ -58,6 +52,7 @@ async function part1 () {
     lines = updatedLines;
   }
 }
+
 
 part1();
 // part2();
