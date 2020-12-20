@@ -1,18 +1,20 @@
 const fs = require('fs');
 
+const gridSize = 1000;
 const createInitialGrid = () => {
   const grid = [];
 
-  for (let row = 0; row < 1000; row++) {
-    const r = [];
-    for (let col = 0; col < 1000; col++) {
-      r.push({
-        x: row,
-        y: col,
-        lit: false
+  for (let x = 0; x < gridSize; x++) {
+    const row = [];
+    for (let y = 0; y < gridSize; y++) {
+      row.push({
+        x,
+        y,
+        lit: false,
+        brightness: 0
       });
     }
-    grid.push(r);
+    grid.push(row);
   }
 
   return grid;
@@ -25,20 +27,29 @@ async function part1 () {
   const answer = input.split('\r\n')
     .map((line) => line.split(/^(.*) (\d+,\d+) through (\d+,\d+)$/).slice(1))
     .reduce((litLights, [instruction, firstCoord, secondCoord]) => {
-      const [x1, y1] = firstCoord.split(',');
-      const [x2, y2] = secondCoord.split(',');
+      const [x1, y1] = firstCoord.split(',').map((coord) => +coord);
+      const [x2, y2] = secondCoord.split(',').map((coord) => +coord);
 
-      for (let row = x1; x2 - row >= 0; row++) {
-        for (let col = y1; y2 - col >= 0; col++) {
-          if (instruction === 'turn on') {
-            litLights += grid[row][col].lit ? 0 : 1;
-            grid[row][col].lit = true;
-          } if (instruction === 'turn off') {
-            litLights += !grid[row][col].lit ? 0 : -1;
-            grid[row][col].lit = false;
-          } if (instruction === 'toggle') {
-            grid[row][col].lit = !grid[row][col].lit;
-            litLights += grid[row][col].lit ? 1 : -1;
+      for (let x = x1; x <= x2; x++) {
+        for (let y = y1; y <= y2; y++) {
+          switch(instruction) {
+            case 'turn on':
+              if (!grid[x][y].lit) litLights += 1;
+              grid[x][y].lit = true;
+              break;
+            case 'turn off': {
+              if (grid[x][y].lit) litLights -= 1;
+              grid[x][y].lit = false;
+              break;
+            }
+            case 'toggle':
+              if (grid[x][y].lit) litLights -= 1;
+              else litLights += 1;
+              grid[x][y].lit = !grid[x][y].lit;
+              break;
+            default:
+              console.log('Instruction not included.');
+              break;
           }
         }
       }
@@ -51,32 +62,42 @@ async function part1 () {
 
 async function part2 () {
   const input = await fs.promises.readFile('input.txt', 'utf-8');
+  const grid = createInitialGrid();
 
   const answer = input.split('\r\n')
     .map((line) => line.split(/^(.*) (\d+,\d+) through (\d+,\d+)$/).slice(1))
     .reduce((brightness, [instruction, firstCoord, secondCoord]) => {
-      const [x1, y1] = firstCoord.split(',');
-      const [x2, y2] = secondCoord.split(',');
+      const [x1, y1] = firstCoord.split(',').map((coord) => +coord);
+      const [x2, y2] = secondCoord.split(',').map((coord) => +coord);
 
-      for (let row = x1; x2 - row >= 0; row++) {
-        for (let col = y1; y2 - col >= 0; col++) {
-          if (instruction === 'turn on') {
-            brightness += 1;
-          } if (instruction === 'turn off') {
-            if (brightness !== 0) {
-              brightness -= 1;
+      for (let x = x1; x <= x2; x++) {
+        for (let y = y1; y <= y2; y++) {
+          switch(instruction) {
+            case 'turn on':
+              brightness += 1;
+              grid[x][y].brightness += 1;
+              break;
+            case 'turn off': {
+              brightness -= grid[x][y].brightness > 0 ? 1 : 0;
+              grid[x][y].brightness -= grid[x][y].brightness > 0 ? 1 : 0;
+              break;
             }
-          } if (instruction === 'toggle') {
-            brightness += 2;
+            case 'toggle':
+              brightness += 2;
+              grid[x][y].brightness += 2;
+              break;
+            default:
+              console.log('Instruction not included.');
+              break;
           }
         }
       }
-      console.log(brightness);
+
       return brightness;
     }, 0);
 
   console.log(`Part 2: ${answer}`);
 }
 
-// part1();
+part1();
 part2();
