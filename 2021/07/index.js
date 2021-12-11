@@ -8,13 +8,9 @@ async function part1() {
   let middle = Math.floor(sortedInput.length / 2);
   let median = sortedInput.length % 2 !== 0 ? sortedInput[middle] : (sortedInput[middle - 1] + sortedInput[middle]) / 2;
 
-  console.log(median);
-
   let answer = 0;
 
   input.forEach((position) => {
-    console.log(position);
-
     if (position > median) {
       for (position; position > median; position--) {
         answer++;
@@ -30,13 +26,32 @@ async function part1() {
 }
 
 async function part2() {
-  const input = (await fs.promises.readFile('input.txt', 'utf-8')).split(',').map(Number);
-  let answer = 0;
+  // PART 2 WAS TAKIN' FROM HERE:
+  // https://www.reddit.com/r/adventofcode/comments/rar7ty/comment/hnmnqvm
+  // Don't know math so I didn't know about a Gauss Method (triangular number)
 
+  const input = (await fs.promises.readFile('input.txt', 'utf-8'))
+    .split(',')
+    .map(Number);
 
+  // Keep up with each crabs fuel
+  let fuel = [];
 
-  console.log(`Part 2: ${answer}`);
+  // Go from smallest to largest number (of crabs)
+  for (let i = Math.min(...input); i <= Math.max(...input); i++) {
+    // Set an initial fuel cost for each crab
+    fuel[i] = 0;
+
+    // Go through each crab in the input
+    for (let j = 0; j < input.length; j++) {
+      // Do some math to figure out the fuel for each crab
+      const positionDiff = Math.abs(input[j] - i);
+      fuel[i] += positionDiff * ((positionDiff + 1) / 2);
+    }
+  }
+
+  console.log(`Part 2: ${Math.min(...fuel)}`);
 }
 
-part1();
-// part2();
+// part1();
+part2();
