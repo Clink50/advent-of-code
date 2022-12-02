@@ -1,7 +1,7 @@
 const fs = require('fs');
 
 async function part1() {
-  const NUM_OF_DAYS = 80;
+  const NUM_OF_DAYS = 256;
   const input = (await fs.promises.readFile('input.txt', 'utf-8')).split(',').map(Number);
   let answer = 0;
 
@@ -16,6 +16,8 @@ async function part1() {
         school[i]--;
       }
     });
+    console.log({day});
+    console.log(school.length);
   }
 
   answer = school.length;
@@ -29,7 +31,7 @@ async function part2() {
   // Not smart enough to think of more performant solution
 
   const NUM_OF_DAYS = 256;
-  const input = (await fs.promises.readFile('input.txt', 'utf-8')).split(',').map(Number);
+  const input = (await fs.promises.readFile('sample.txt', 'utf-8')).split(',').map(Number);
   let answer = 0;
 
   // Create array as # of fish life (9 days)
@@ -55,5 +57,5 @@ async function part2() {
   console.log(`Part 2: ${answer}`);
 }
 
-// part1();
-part2();
+part1();
+// part2();
