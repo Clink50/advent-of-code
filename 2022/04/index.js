@@ -46,8 +46,6 @@ async function part2() {
       (elf2RangeFrom >= elf1RangeFrom && elf2RangeTo <= elf1RangeTo) ||
       (elf1RangeTo >= elf2RangeFrom && elf2RangeTo >= elf1RangeFrom)
     ) {
-      console.log(elf1RangeFrom, elf1RangeTo);
-      console.log(elf2RangeFrom, elf2RangeTo);
       sum += 1;
     }
 
