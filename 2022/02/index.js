@@ -97,7 +97,7 @@ async function part2() {
 
   const answer = sum;
 
-  console.log(`Part 1: ${answer}`);
+  console.log(`Part 2: ${answer}`);
 }
 
 part1();
